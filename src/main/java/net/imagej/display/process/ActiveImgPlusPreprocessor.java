@@ -33,11 +33,9 @@ package net.imagej.display.process;
 
 import net.imagej.Dataset;
 import net.imagej.ImgPlus;
-import net.imagej.display.ImageDisplayService;
 
 import org.scijava.Priority;
 import org.scijava.module.process.PreprocessorPlugin;
-import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 /**
@@ -54,11 +52,7 @@ import org.scijava.plugin.Plugin;
  */
 @SuppressWarnings("rawtypes")
 @Plugin(type = PreprocessorPlugin.class, priority = Priority.VERY_HIGH_PRIORITY)
-public class ActiveImgPlusPreprocessor extends SingleInputPreprocessor<ImgPlus>
-{
-
-	@Parameter(required = false)
-	private ImageDisplayService imageDisplayService;
+public class ActiveImgPlusPreprocessor extends AbstractDatasetPreprocessor<ImgPlus> {
 
 	public ActiveImgPlusPreprocessor() {
 		super(ImgPlus.class);
@@ -68,8 +62,10 @@ public class ActiveImgPlusPreprocessor extends SingleInputPreprocessor<ImgPlus>
 
 	@Override
 	public ImgPlus getValue() {
-		if (imageDisplayService == null) return null;
-		return imageDisplayService.getActiveDataset().getImgPlus();
+		final Dataset ds = getDataset();
+		if (ds == null)
+			return null;
+		return ds.getImgPlus();
 	}
 
 }
